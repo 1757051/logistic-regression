@@ -1,0 +1,35 @@
+setwd("F:/r1project")
+credit_Train=read.csv("R_Module_Day_7.2_Credit_Risk_Train_data.csv")
+View(credit_Train)
+str(credit_Train)
+hist(credit_Train$LoanAmount)
+table(credit_Train$LoanAmount)
+hist(credit_Train$LoanAmount)
+table(credit_Train$Credit_History)
+table(credit_Train$Loan_Status)
+credit_Train$LoanAmount[is.na(credit_Train$LoanAmount)]=median(credit_Train$LoanAmount,na.rm = TRUE)
+credit_Train$Loan_Amount_Term[is.na(credit_Train$Loan_Amount_Term)]=median(credit_Train$Loan_Amount_Term,na.rm = TRUE)
+View(credit_Train)
+table(credit_Train$LoanAmount)
+hist(credit_Train$LoanAmount)
+credit_Train$Credit_History[is.na(credit_Train$Credit_History)]=1
+str(credit_Train)
+model=glm(Loan_Status~.-Loan_ID,family = 'binomial',data = credit_Train)
+model=glm(Loan_Status~.-Loan_ID,data=credit_Train,family = binomial)
+summary(model)
+predict_Loan=predict(model, Type='response')
+head(predict)
+
+table(credit_Train$Loan_Status,predict_Loan>0.5)
+str(credit_Train)
+credit_Train$Loan_Status=ifelse(credit_Train$Loan_Status=='Y',1,0)
+install.packages('ROCR')
+
+#ROCR Curve
+library(ROCR)
+ROCRpred <- prediction(credit_Train$prediction_Loan,credit_Train$labels)
+ROCRperf <- performance(ROCRpred, 'tpr','fpr')
+plot(ROCRperf)
+plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
+
+
